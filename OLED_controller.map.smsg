@@ -1,0 +1,1 @@
+Warning (10268): Verilog HDL information at OLED_controller.v(266): always construct contains both blocking and non-blocking assignments File: D:/Academics/M-sem4/VLSI Design Lab/Verilog projects/Project/OLED_controller/OLED_controller/OLED_controller.v Line: 266

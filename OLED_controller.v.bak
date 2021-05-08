@@ -1,0 +1,155 @@
+
+
+
+
+
+module OLED_controller (CLOCK_50,reset,button,SDA,SCL, controller_clock,LED,OLED_driver_clock);
+	
+	input CLOCK_50;
+	input reset;
+	input button;
+	//input [7:0] OPERATION;
+	//output reg driver_clock;
+	inout  SDA;
+	output  SCL;
+	output reg controller_clock;
+	output reg [1:0] LED;
+	output  OLED_driver_clock;
+	
+	
+	reg [31:0] counter;
+	reg OLED_driver_reset;
+	//reg driver_clock;
+	reg [7:0] OPERATION;
+	reg [7:0] state;
+	reg [11:0] data;
+	reg [7 : 0] FONT [0 : 3167] ;
+	//reg [7 : 0] FONT [0 : 3167] ;
+	
+	localparam [7:0]  IDLE =0,
+							STATE_1= 1,
+							STATE_2 = 2,
+							STATE_3 = 3;
+	
+	localparam [7:0] INIT_OLED= 1,
+						 CLEAR_DISPLAY = 2,
+							  DISPLAY_CHAR = 3;
+							  
+	initial begin
+		counter <= 32'b0;
+		controller_clock <= 1'b0;
+		$readmemh("English_font.hex", FONT ) ;
+		
+	end
+	
+	
+	OLED_driver (CLOCK_50,OLED_driver_reset,OPERATION,data,SDA,SCL,OLED_driver_clock,data_index,data_for_index);
+	
+	assign data_for_index = FONT[data_index];
+	
+	
+	always @ (posedge controller_clock,posedge reset,posedge button)
+		begin
+					
+					if(reset)
+						begin
+								state <= IDLE;
+								OLED_driver_reset <= 0;
+								OPERATION <= IDLE;
+								
+								
+								//LED <= {FONT[0][4],FONT[0][0]};
+						end
+					
+					else if(button)
+						begin
+								state <= STATE_1;
+								OPERATION <= IDLE;
+								LED[0]<= 0;
+								LED[1]<= 1;
+								
+								
+						end
+					
+					else
+						begin
+							
+								
+								case (state)
+									IDLE:
+										begin
+											state <= IDLE;
+											OLED_driver_reset <= 0;
+											OPERATION <= IDLE;
+											LED[0]<= 1;
+											LED[1]<= 1;
+										end
+									STATE_1:
+										begin
+												OPERATION <= INIT_OLED;
+												OLED_driver_reset <= 0;
+												state <=STATE_3;// STATE_2;
+												LED[0]<= 1;
+												LED[1]<= 0;
+												
+										end
+									STATE_2:
+										begin
+												OPERATION <= CLEAR_DISPLAY;
+												OLED_driver_reset <= 0;
+												state <= STATE_3;
+												LED[0]<= 1;
+												LED[1]<= 0;
+												
+										end
+									STATE_3:
+										begin
+												OPERATION <= DISPLAY_CHAR;
+												OLED_driver_reset <= 0;
+												data = 2146;
+												state <= IDLE;
+												LED[0]<= 0;
+												LED[1]<= 0;
+												
+										end
+									
+									
+									
+					
+								endcase
+					
+					
+					
+					
+						end
+	
+		end
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	always @ (posedge CLOCK_50) 
+	begin
+	counter <= counter + 1'b1;
+		if (counter > 100000000)//500) //50000)//50000000)//50000000)
+			begin
+				controller_clock <= !controller_clock;
+				//LED[0] <= !LED[0];
+				counter <= 32'b0;
+			end
+
+	end
+
+	
+	
+	
+endmodule
