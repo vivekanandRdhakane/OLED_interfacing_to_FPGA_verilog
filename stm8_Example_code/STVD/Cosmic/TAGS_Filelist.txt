@@ -1,0 +1,12 @@
+..\..\main.c
+..\..\stm8s_clk.c
+..\..\stm8s_uart1.c
+stm8_interrupt_vector.c
+..\..\main.h
+..\..\stm8s.h
+..\..\stm8s_clk.h
+..\..\stm8s_conf.h
+..\..\stm8s_uart1.h
+..\..\..\..\..\..\..\..\software installed\cosmic\fse_compilers\cxstm8\hstm8\mods0.h
+..\..\..\..\..\..\..\..\software installed\cosmic\fse_compilers\cxstm8\hstm8\stdio.h
+..\..\..\..\..\..\..\..\software installed\cosmic\fse_compilers\cxstm8\hstm8\stdlib.h
